@@ -128,3 +128,22 @@ body{background:transparent}
 nav a.gh{margin-left:1.1rem}
 .gh:hover{color:var(--gold)}
 .colophon .gh{vertical-align:-3px;margin-left:.2rem;color:var(--soft)}
+
+.dust{touch-action:pan-y;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+a,button{-webkit-tap-highlight-color:transparent}
+.brand{white-space:nowrap}
+@media (max-width:520px){
+  .top{padding-top:1.4rem;gap:.8rem}
+  .nav-index{display:none}
+  nav{display:flex;align-items:center;gap:1rem}
+  nav a,nav a.gh,.mode,.term-btn{margin-left:0}
+  .dust{height:clamp(200px,62vw,260px)}
+  .quote{min-height:0;margin-top:.6rem}
+  .quote blockquote{font-size:1.2rem}
+  .shell{margin:2.2rem 0 3rem}
+  .ps1{max-width:none}
+  body::before{opacity:.35}
+}
+
+html{background-attachment:fixed;min-height:100%}
+@media (max-width:520px){.post header{padding:2.5rem 0 1.5rem}.listing{padding-top:2.5rem}}

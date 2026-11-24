@@ -59,17 +59,17 @@
     var off=document.createElement('canvas'),o=off.getContext('2d');off.width=W;off.height=H;
     o.textAlign='center';o.textBaseline='middle';o.fillStyle='#000';
     var fs,small=W<480;
-    if(small){fs=Math.min(W/3.3,H*.42);o.font='italic 500 '+fs+'px "Cormorant Garamond", serif';o.fillText('Glory',W/2,H*.3);o.fillText('Ruin',W/2,H*.74)}
-    else{fs=Math.min(W/5.2,H*.62);o.font='italic 500 '+fs+'px "Cormorant Garamond", serif';o.fillText('Glory Ruin',W/2,H/2)}
+    if(small){fs=Math.min(W/3,H*.4);o.font=fs+'px "Pinyon Script", cursive';o.fillText('Glory',W*.42,H*.27);o.fillText('Ruin',W*.6,H*.75)}
+    else{fs=Math.min(W/4.2,H*.78);o.font=fs+'px "Pinyon Script", cursive';o.fillText('Glory Ruin',W/2,H/2)}
     var d=o.getImageData(0,0,W,H).data,a0=W,a1=0,b0=H,b1=0;
     for(var yy=0;yy<H;yy+=2)for(var xx=0;xx<W;xx+=2)if(d[(yy*W+xx)*4+3]>128){if(xx<a0)a0=xx;if(xx>a1)a1=xx;if(yy<b0)b0=yy;if(yy>b1)b1=yy}
-    var ox=Math.round((W-a0-a1)/2),oy=Math.round((H-b0-b1)/2),step=small?2.5:Math.max(2.5,W/300),fresh=!P.length;P=[];
+    var ox=Math.round((W-a0-a1)/2),oy=Math.round((H-b0-b1)/2),step=small?1.9:Math.max(2.2,W/340),fresh=!P.length;P=[];
     x0=a0+ox;x1=a1+ox;
     for(var y=0;y<H;y+=step)for(var x=0;x<W;x+=step){var al=d[(Math.round(y)*W+Math.round(x))*4+3];if(al<110)continue;
       var hx=x+ox+(Math.random()-.5)*step*.8,hy=y+oy+(Math.random()-.5)*step*.8;
       // 像墨点：大多细小，少数稍大；边缘的点更淡（像纸吸墨的晕）
       var big=Math.random();P.push({hx:hx,hy:hy,x:hx,y:hy,vx:0,vy:0,
-        s:big<.06?2.2:big<.3?1.4:.9, a:(al/255)*(.55+Math.random()*.45),
+        s:big<.06?2.1:big<.3?1.45:1.1, a:(al/255)*(.65+Math.random()*.35),
         g:Math.random()<.16, ph:Math.random()*6.28,
         // 书写：按横坐标依次落墨，同一列内从上到下
         delay:((hx-x0)/(x1-x0||1))*1500+(hy/H)*120+Math.random()*90})}
@@ -98,12 +98,17 @@
   }
   function kick(){if(!running&&visible){running=true;requestAnimationFrame(frame)}}
   window.scatterDust=function(){P.forEach(function(p){p.vx+=(Math.random()-.5)*40;p.vy+=(Math.random()-.5)*40});kick()};
-  cv.addEventListener('pointermove',function(e){var r=cv.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;kick()});
+  function at(e){var r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
+  // mouse: dots part around the cursor; click scatters
+  cv.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;var q=at(e);mouse.x=q.x;mouse.y=q.y;kick()});
   cv.addEventListener('pointerleave',function(){mouse.x=mouse.y=-1e4});
-  cv.addEventListener('click',scatterDust);
+  cv.addEventListener('click',function(e){if(e.pointerType==='mouse'||!e.pointerType)scatterDust()});
+  // touch: a tap sends one soft ripple outward from the finger, then the ink settles
+  cv.addEventListener('pointerdown',function(e){if(e.pointerType==='mouse')return;var q=at(e);
+    P.forEach(function(p){var dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy)||1;if(d<90){var f=(1-d/90)*7;p.vx+=dx/d*f;p.vy+=dy/d*f}});kick()});
   new IntersectionObserver(function(es){visible=es[0].isIntersecting;kick()}).observe(cv);
   document.addEventListener('visibilitychange',kick);
   window.addEventListener('themechange',colors);
   var rt,lw=innerWidth;addEventListener('resize',function(){if(innerWidth===lw)return;lw=innerWidth;clearTimeout(rt);rt=setTimeout(build,200)});
-  (document.fonts?document.fonts.load('italic 500 40px "Cormorant Garamond"'):Promise.resolve()).then(build,build);
+  (document.fonts?document.fonts.load('40px "Pinyon Script"'):Promise.resolve()).then(build,build);
 })();

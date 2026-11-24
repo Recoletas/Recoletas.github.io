@@ -14,7 +14,7 @@
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function print(h,cls){var d=document.createElement('div');if(cls)d.className=cls;d.innerHTML=h;out.appendChild(d);out.scrollTop=out.scrollHeight}
   function line(s,cls){print(esc(s),cls)}
-  function prompt(){ps1.textContent=user+'@glory-ruin:'+cwd+'$'}
+  function prompt(){ps1.textContent=(innerWidth<520?cwd:user+'@glory-ruin:'+cwd)+' $'}
   function resolve(a){
     if(!a||a==='~')return '~';
     var parts=(a[0]==='~'?a:(a[0]==='/'?'~'+a:cwd+'/'+a)).split('/'),st=[];
